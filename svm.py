@@ -34,7 +34,7 @@ class SVM(StatModel):
         self.model.setP(0.1)  # for EPSILON_SVR, epsilon in loss function?
         self.model.setC(0.01)  # From paper, soft classifier
         self.model.setType(cv2.ml.SVM_EPS_SVR)  # C_SVC # EPSILON_SVR # may be also NU_SVR # do regression task
-        self.model.traiinn(samples, cv2.ml.ROW_SAMPLE, responses)
+        self.model.train(samples, cv2.ml.ROW_SAMPLE, responses)
 
     def predict(self, samples):
         return np.float32( [self.model.predict(s) for s in samples])
@@ -54,7 +54,7 @@ if img_list:
         vecImgs.append(np.asarray(im, dtype=np.uint8))
         vecLables.append(c)
     vecLables = np.asarray(vecLables, dtype=np.int32)
-    vecImgs= np.array(vecImgs)
+    vecImgs= np.asarray(vecImgs)
     # print vecImgs
     svm = SVM()
     # svm = cv2.ml.SVM_create()
