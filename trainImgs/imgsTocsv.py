@@ -30,10 +30,10 @@ carlable = 0
 facelable = 1
 carimgs = os.listdir(carPath)
 carimgs.sort(key=lambda x:int((x.split('-')[1]).split('.')[0]))
-for filename in carimgs:
-    filepath = os.path.join(carPath,filename)
-    data = data + [tuple(["%s;%d" % (filepath,carlable)])]
-    docsv.csv_writer(data)
+# for filename in carimgs:
+#     filepath = os.path.join(carPath,filename)
+#     data = data + [tuple(["%s;%d" % (filepath,carlable)])]
+#     docsv.csv_writer(data)
 
 faceimgs = os.listdir(facePath)
 faceimgs.sort(key=lambda x:int(x.split('.')[0]))

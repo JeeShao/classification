@@ -11,7 +11,7 @@ class doCsv:
 
     def csv_writer(self,data):
         try:
-            with open(self.file, 'w') as csvfile:
+            with open(self.file, 'w',newline='') as csvfile:
                 # csvfile.write(codecs.BOM_UTF8)
                 now = time.strftime("%Y-%m-%d %H:%M:%S")
                 writer = csv.writer(csvfile, dialect='excel')
