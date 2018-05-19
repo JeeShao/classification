@@ -22,22 +22,22 @@ import doCsv
 #         raise
 
 this_dir = os.path.abspath(os.path.dirname(__file__))
-carPath =  os.path.join(this_dir,'car')
-facePath =  os.path.join(this_dir,'face')
+lighterPath =  os.path.join(this_dir,'lighter')
+membankPath =  os.path.join(this_dir,'membank')
 docsv = doCsv.doCsv('../traindata.csv')
 data= []
-carlable = 0
-facelable = 1
-carimgs = os.listdir(carPath)
-carimgs.sort(key=lambda x:int((x.split('-')[1]).split('.')[0]))
-# for filename in carimgs:
-#     filepath = os.path.join(carPath,filename)
-#     data = data + [tuple(["%s;%d" % (filepath,carlable)])]
-#     docsv.csv_writer(data)
+lighterlable = -1
+membanklable = 1
+lighterimgs = os.listdir(lighterPath)
+lighterimgs.sort(key=lambda x:int(x.split('.')[0]))
+for filename in lighterimgs:
+    filepath = os.path.join(lighterPath,filename)
+    data = data + [tuple(["%s;%d" % (filepath,lighterlable)])]
+    docsv.csv_writer(data)
 
-faceimgs = os.listdir(facePath)
-faceimgs.sort(key=lambda x:int(x.split('.')[0]))
-for filename in faceimgs:
-    filepath = os.path.join(facePath,filename)
-    data = data + [tuple(["%s;%d" % (filepath,facelable)])]
+membankimgs = os.listdir(membankPath)
+membankimgs.sort(key=lambda x:int(x.split('.')[0]))
+for filename in membankimgs:
+    filepath = os.path.join(membankPath,filename)
+    data = data + [tuple(["%s;%d" % (filepath,membanklable)])]
     docsv.csv_writer(data)

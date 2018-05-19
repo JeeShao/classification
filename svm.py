@@ -5,7 +5,6 @@
 
 import cv2
 import doCsv
-import sys
 import numpy as np
 
 class StatModel(object):
@@ -67,53 +66,58 @@ def computeHOGs(img_lst):
         gradient_lst.append(hog.compute(img, winStride, padding))
     return gradient_lst
 
-# hog = cv2.HOGDescriptor(imageSize, Size(16, 16), cvSize(8, 8), cvSize(8, 8), 9)
-#     # hog.winSize = wsize
-#     for i in range(len(img_lst)):
-#         if img_lst[i].shape[1] >= wsize[1] and img_lst[i].shape[0] >= wsize[0]:
-#             roi = img_lst[i][(img_lst[i].shape[0] - wsize[0]) // 2: (img_lst[i].shape[0] - wsize[0]) // 2 + wsize[0], \
-#                   (img_lst[i].shape[1] - wsize[1]) // 2: (img_lst[i].shape[1] - wsize[1]) // 2 + wsize[1]]
-#             gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
-#             gradient_lst.append(hog.compute(gray))
-#     # return gradient_lst
+def train_model():
+    docsv = doCsv.doCsv()
+    vecImgs, vecLables = [], []
+    img_list = docsv.csv_reader()
+    if img_list:
+        for i in range(1, len(img_list)):
+            img_str = img_list[i].split(';')
+            filepath = img_str[0]
+            # try:
+            im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
+            c = img_str[1]
+            # except:
+                # traceback.print_exc()
+            vecImgs.append(np.asarray(im, dtype=np.uint8))
+            vecLables.append(c)
 
-# docsv = doCsv.doCsv()
-# vecImgs, vecLables = [], []
-# img_list = docsv.csv_reader()
-# if img_list:
-#     for i in range(1, len(img_list)):
-#         img_str = img_list[i].split(';')
-#         filepath = img_str[0]
-#         # try:
-#         im = cv2.imread(filepath, cv2.IMREAD_GRAYSCALE)
-#         c = img_str[1]
-#         # except:
-#             # traceback.print_exc()
-#         vecImgs.append(np.asarray(im, dtype=np.uint8))
-#         vecLables.append(c)
-#
-#     gradient_lst = computeHOGs(vecImgs)
-#
-#     vecLables = np.asarray(vecLables, dtype=np.int32)
-#     vecImgs= np.array(gradient_lst)
-#     svm = SVM()
-#     # svm = cv2.ml.SVM_create()
-#     # params = dict(kernel_type=cv2.ml.SVM_LINEAR ,svm_type=cv2.ml.SVM_C_SVC,C=1)
-#     svm.train(vecImgs, vecLables)
-#     svm.save("model.xml")
+        gradient_lst = computeHOGs(vecImgs)
 
-# if __name__=="__main__":
-#     svm = SVM()
-#     svm = StatModel.load("model.xml")
+        vecLables = np.asarray(vecLables, dtype=np.int32)
+        vecImgs= np.array(gradient_lst)
+        svm = SVM()
+        # svm = cv2.ml.SVM_create()
+        # params = dict(kernel_type=cv2.ml.SVM_LINEAR ,svm_type=cv2.ml.SVM_C_SVC,C=1)
+        svm.train(vecImgs, vecLables)
+        svm.save("model.xml")
 
+def test_model():
+    test = []
+    pos = 0
+    svm = cv2.ml.SVM_load("model.xml")
+    hog = cv2.HOGDescriptor((64,64),(16,16),(8,8),(8,8),9)
+    # for i in range(1,301):
+    #     testimg = cv2.imread("./trainImgs/lighter/%d.jpg"% i, cv2.COLOR_BGR2GRAY)
+    #     test.append(testimg)
+    #     # hog = cv2.HOGDescriptor()
+    #     gradient_lst = hog.compute(testimg, (8,8), (8,8))
+    #     gradient_lst = gradient_lst.transpose()
+    # # gradient_lst = computeHOGs(testimg)
+    #     out = svm.predict(np.asarray(gradient_lst,dtype=np.float32))
+    #     if out[1]<-0.8:
+    #         pos+=1
+    #     print(out[1][0][0])
+    # print("正确数：",pos)
 
+    testimg = cv2.imread("./trainImgs/neg.jpg", cv2.COLOR_BGR2GRAY)
+    # hog = cv2.HOGDescriptor()
+    gradient_lst = hog.compute(testimg, (8,8), (8,8))
+    gradient_lst = gradient_lst.transpose()
+    # gradient_lst = computeHOGs(testimg)
+    out = svm.predict(np.asarray(gradient_lst,dtype=np.float32))
+    print(out)
 
-svm = cv2.ml.SVM_load("model.xml")
-testimg = cv2.imread("./trainImgs/lighter/300.jpg", cv2.COLOR_BGR2GRAY)
-# hog = cv2.HOGDescriptor()
-hog = cv2.HOGDescriptor((64,64),(16,16),(8,8),(8,8),9)
-gradient_lst = hog.compute(testimg, (8,8), (8,8))
-gradient_lst = gradient_lst.transpose()
-# gradient_lst = computeHOGs(testimg)
-out = svm.predict(np.asarray(gradient_lst,dtype=np.float32))
-print(out)
+if __name__ == '__main__':
+    # train_model()
+    test_model()
