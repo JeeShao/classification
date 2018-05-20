@@ -27,12 +27,12 @@ class SVM(StatModel):
         self.model.setDegree(3)
         criteria = (cv2.TERM_CRITERIA_MAX_ITER + cv2.TERM_CRITERIA_EPS, 1000, 1e-3)
         self.model.setTermCriteria(criteria)
-        self.model.setGamma(0)
-        self.model.setKernel(cv2.ml.SVM_LINEAR)
+        self.model.setGamma(0.5)   #0
+        self.model.setKernel(cv2.ml.SVM_LINEAR)  #LINER
         self.model.setNu(0.5)
         self.model.setP(0.1)  # for EPSILON_SVR, epsilon in loss function?
-        self.model.setC(0.01)  # From paper, soft classifier
-        self.model.setType(cv2.ml.SVM_EPS_SVR)  # C_SVC # EPSILON_SVR # may be also NU_SVR # do regression task
+        self.model.setC(30)  # From paper, soft classifier   0.01
+        self.model.setType(cv2.ml.SVM_C_SVC)  # C_SVC # EPSILON_SVR # may be also NU_SVR # do regression task  SVM_EPS_SVR
         self.model.train(samples, cv2.ml.ROW_SAMPLE, responses)
 
     def predict(self, samples):
@@ -43,7 +43,6 @@ class SVM(StatModel):
 def computeHOGs(img_lst):
     gradient_lst = []
     winSize = (64,64)
-    # winSize = (112, 88)
     # blockSize = (8, 8)
     blockSize = (16,16)
     blockStride = (8, 8)
@@ -110,7 +109,7 @@ def test_model():
     #     print(out[1][0][0])
     # print("正确数：",pos)
 
-    testimg = cv2.imread("./trainImgs/neg.jpg", cv2.COLOR_BGR2GRAY)
+    testimg = cv2.imread("./trainImgs/lighter_test.jpg", cv2.COLOR_BGR2GRAY)
     # hog = cv2.HOGDescriptor()
     gradient_lst = hog.compute(testimg, (8,8), (8,8))
     gradient_lst = gradient_lst.transpose()
